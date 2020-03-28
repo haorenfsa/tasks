@@ -39,6 +39,7 @@ func (t *Tasks) Add(task models.Task) error {
 // Get a task
 func (t *Tasks) Get(name string) (models.Task, error) {
 	// TODO: @shaoyue.chen
+	// _, err := t.engine.Exec("SELECT * FROM ")
 	return models.Task{}, nil
 }
 
