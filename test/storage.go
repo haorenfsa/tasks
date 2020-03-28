@@ -41,7 +41,7 @@ func NewTestEngine() *TestEngine {
 		panic(err)
 	}
 
-	engine.Exec("CREATE TABLE IF NOT EXISTS  `tasks` (" +
+	engine.Exec("CREATE TABLE IF NOT EXISTS  `task` (" +
 		"`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT \"primary key\"," +
 		"`name` VARCHAR(128) NOT NULL COMMENT \"name, unique\"," +
 		"`due_time` datetime NOT NULL COMMENT \"due time of task\"," +

@@ -30,7 +30,7 @@ type DBTask struct {
 // Add a task
 func (t *Tasks) Add(task models.Task) error {
 	_, err := t.engine.Exec(
-		"INSERT INTO tasks (name,due_time,status) VALUES(?,?,?)",
+		"INSERT INTO task (name,due_time,status) VALUES(?,?,?)",
 		task.Name, task.DueTime, task.Status,
 	)
 	return err

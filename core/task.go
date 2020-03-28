@@ -37,5 +37,6 @@ func (t *Tasks) Add(task *models.Task) error {
 }
 
 func (t *Tasks) Get(name string) (models.Task, error) {
-
+	// TODO: @shaoyue.chen
+	return models.Task{}, nil
 }
