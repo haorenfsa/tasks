@@ -16,11 +16,13 @@
 - UpdateTask
     - update status
     - update name
+    - update day plan
+    - update week plan
 
 - DeleteTask
 
 #### TODO
 - UpdateTask
-    - update day plan
-    - update week plan
-    - update due time
+    - change order in table
+    - add/update description
+
