@@ -21,7 +21,7 @@ var tableSQLs = []string{
 		month TINYINT(2) NOT NULL DEFAULT -1 COMMENT 'planed month, -1 means not set',
 		week TINYINT(2) NOT NULL DEFAULT -1 COMMENT 'planed week, -1 means not set',
 		day TINYINT(1) NOT NULL DEFAULT -1 COMMENT 'planed day, -1 means not set',
-		status TINYINT NOT NULL DEFAULT -1 COMMENT 'task status',
+		status TINYINT NOT NULL DEFAULT 0 COMMENT 'task status',
 		created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time auto',
 		updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time auto',
 		PRIMARY KEY (id),

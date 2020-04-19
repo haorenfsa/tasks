@@ -4,15 +4,19 @@ import "time"
 
 // Task model
 type Task struct {
-	ID        int64      `db:"id" json:"id"`
-	Name      string     `db:"name" json:"name"`
-	Status    TaskStatus `db:"status" json:"status"`
-	Year      int        `db:"year" json:"year"`
-	Month     int        `db:"month" json:"month"`
-	Week      int        `db:"week" json:"week"`
-	Day       int        `db:"day" json:"day"`
-	CreatedAt time.Time  `db:"created_at" json:"created_at"`
-	UpdatedAt time.Time  `db:"updated_at" json:"updated_at"`
+	ID        int64      `json:"id"`
+	Name      string     `json:"name"`
+	Status    TaskStatus `json:"status"`
+	Plan      TaskPlan   `json:"plan"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+}
+
+type TaskPlan struct {
+	Year  int `json:"year"`
+	Month int `json:"month"`
+	Week  int `json:"week"`
+	Day   int `json:"day"`
 }
 
 // NOTSET int default value

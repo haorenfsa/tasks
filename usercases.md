@@ -12,7 +12,6 @@
     - add by name
 
 - QueryAllTasks
-    - query by page
 
 - UpdateTask
     - update status
