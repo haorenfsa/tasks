@@ -1,6 +1,7 @@
 package ctrl
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,7 @@ import (
 
 func writeMsgResponseByError(c *gin.Context, err error) {
 	if err != nil {
+		log.Print("Err:", err)
 		code := errs.ErrorToHTTPCode(err)
 		c.JSON(code, errMsgMethodFailed)
 		return
@@ -19,6 +21,7 @@ func writeMsgResponseByError(c *gin.Context, err error) {
 
 func writeObjectResponseByError(c *gin.Context, ret interface{}, err error) {
 	if err != nil {
+		log.Print("Err:", err)
 		code := errs.ErrorToHTTPCode(err)
 		c.JSON(code, errMsgMethodFailed)
 		return

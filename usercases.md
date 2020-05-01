@@ -24,5 +24,6 @@
 #### TODO
 - UpdateTask
     - change order in table
+        - how: position column
     - add/update description
 
