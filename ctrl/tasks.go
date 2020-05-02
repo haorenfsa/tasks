@@ -28,6 +28,7 @@ func (a *TaskController) Register(root gin.IRouter) {
 	g.GET("", a.handleQueryTasks)
 	g.PATCH("", a.handleUpdateTask)
 	g.DELETE("/:id", a.handleDeleteTask)
+	g.PUT("/:id/position/:position", a.handleChangePosition)
 }
 
 func (a *TaskController) handleAddTask(c *gin.Context) {
@@ -63,7 +64,21 @@ func (a *TaskController) handleDeleteTask(c *gin.Context) {
 	id, err := parseIntParam(c, "id")
 	if err != nil {
 		writeMsgResponseByError(c, err)
+		return
 	}
 	err = a.core.DeleteTask(id)
+	writeMsgResponseByError(c, err)
+}
+
+func (a *TaskController) handleChangePosition(c *gin.Context) {
+	id, err := parseIntParam(c, "id")
+	if err != nil {
+		writeMsgResponseByError(c, err)
+	}
+	position, err := parseIntParam(c, "position")
+	if err != nil {
+		writeMsgResponseByError(c, err)
+	}
+	err = a.core.ChangePosition(id, int(position))
 	writeMsgResponseByError(c, err)
 }

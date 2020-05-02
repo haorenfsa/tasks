@@ -136,22 +136,36 @@ func (t *Tasks) ChangePosition(id int64, tPos int) error {
 	}
 	defer func() {
 		if err == nil {
-			return
+			err = tx.Commit()
+			if err == nil {
+				return
+			}
 		}
 		if errRb := tx.Rollback(); errRb != nil {
 			log.Warnf("transaction rollback error: %v", errRb)
 		}
 	}()
 	var cPos int // current position
-	err = t.engine.Get(&cPos, "SELECT position FROM task WHERE id=?", id)
+	err = tx.Get(&cPos, "SELECT position FROM task WHERE id=?", id)
 	if err != nil {
 		return err
 	}
-	_, err = t.engine.Exec("UPDATE task SET position=position - 1 WHERE position > ? and position <= ?", cPos, tPos)
-	if err != nil {
-		return err
+
+	if tPos > cPos {
+		_, err = tx.Exec("UPDATE task SET position=position - 1 WHERE position > ? and position <= ?", cPos, tPos)
+		if err != nil {
+			return err
+		}
+	} else if tPos < cPos {
+		_, err = tx.Exec("UPDATE task SET position=position + 1 WHERE position >= ? and position < ?", tPos, cPos)
+		if err != nil {
+			return err
+		}
+	} else {
+		return nil
 	}
-	_, err = t.engine.Exec("UPDATE task SET position=? WHERE id=?", tPos, id)
+
+	_, err = tx.Exec("UPDATE task SET position=? WHERE id=?", tPos, id)
 	return err
 }
 
@@ -163,7 +177,10 @@ func (t *Tasks) DeleteTask(id int64) error {
 	}
 	defer func() {
 		if err == nil {
-			return
+			err = tx.Commit()
+			if err == nil {
+				return
+			}
 		}
 		if errRb := tx.Rollback(); errRb != nil {
 			log.Warnf("transaction rollback error: %v", errRb)
@@ -171,16 +188,16 @@ func (t *Tasks) DeleteTask(id int64) error {
 	}()
 
 	var cPos int // current position
-	err = t.engine.Get(&cPos, "SELECT position FROM task WHERE id=?", id)
+	err = tx.Get(&cPos, "SELECT position FROM task WHERE id=?", id)
 	if err != nil {
 		return err
 	}
 
-	_, err = t.engine.Exec(`DELETE FROM task WHERE id=?`, id)
+	_, err = tx.Exec(`DELETE FROM task WHERE id=?`, id)
 	if err != nil {
 		return err
 	}
 
-	_, err = t.engine.Exec(`UPDATE task SET position = position - 1 WHERE position > ?`, cPos)
+	_, err = tx.Exec(`UPDATE task SET position = position - 1 WHERE position > ?`, cPos)
 	return err
 }

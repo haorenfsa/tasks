@@ -12,6 +12,6 @@ func parseIntParam(c *gin.Context, name string) (ret int64, err error) {
 	ret, err = strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		err = errs.ErrBadRequest
-		return
 	}
+	return
 }
