@@ -24,16 +24,22 @@ func NewTaskController(core core.Tasks) *TaskController {
 // Register registers request handler
 func (a *TaskController) Register(root gin.IRouter) {
 	g := root.Group("/tasks")
-	g.PUT("/:name", a.handleAddTask)
+	g.POST("/", a.handleAddTask)
 	g.GET("", a.handleQueryTasks)
-	g.PATCH("/:name", a.handleUpdateTask)
-	g.DELETE("/:name", a.handleDeleteTask)
+	g.PATCH("", a.handleUpdateTask)
+	g.DELETE("/:id", a.handleDeleteTask)
 }
 
 func (a *TaskController) handleAddTask(c *gin.Context) {
-	name := c.Param("name")
-	err := a.core.Add(name)
-	writeMsgResponseByError(c, err)
+	task := new(models.Task)
+	err := c.ShouldBindJSON(task)
+	if err != nil {
+		log.Warn("handleUpdateTask:", err)
+		c.JSON(http.StatusBadRequest, errMsgBadBody)
+		return
+	}
+	err = a.core.Add(task)
+	writeObjectResponseByError(c, task, err)
 }
 
 func (a *TaskController) handleQueryTasks(c *gin.Context) {
@@ -42,7 +48,6 @@ func (a *TaskController) handleQueryTasks(c *gin.Context) {
 }
 
 func (a *TaskController) handleUpdateTask(c *gin.Context) {
-	name := c.Param("name")
 	task := new(models.Task)
 	err := c.ShouldBindJSON(task)
 	if err != nil {
@@ -50,12 +55,15 @@ func (a *TaskController) handleUpdateTask(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errMsgBadBody)
 		return
 	}
-	err = a.core.UpdateTask(name, *task)
+	err = a.core.UpdateTask(*task)
 	writeMsgResponseByError(c, err)
 }
 
 func (a *TaskController) handleDeleteTask(c *gin.Context) {
-	name := c.Param("name")
-	err := a.core.DeleteTask(name)
+	id, err := parseIntParam(c, "id")
+	if err != nil {
+		writeMsgResponseByError(c, err)
+	}
+	err = a.core.DeleteTask(id)
 	writeMsgResponseByError(c, err)
 }

@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS task (
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time auto',
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time auto',
     PRIMARY KEY (id),
-    UNIQUE KEY uk_name (name)
+    UNIQUE KEY uk_name (name),
+    UNIQUE KEY uk_position (position)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='tasks';

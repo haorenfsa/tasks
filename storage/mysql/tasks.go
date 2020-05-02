@@ -23,11 +23,11 @@ func NewTasks(engine *engine.Default) *Tasks {
 const taskQueryFields = "id,name,status,position,year,month,week,day,created_at,updated_at"
 
 // Add a task
-func (t *Tasks) Add(name string) (err error) {
+func (t *Tasks) Add(task *models.Task) (err error) {
 	var position int
 	tx, err := t.engine.Beginx()
 	if err != nil {
-		return err
+		return
 	}
 	defer func() {
 		if err == nil {
@@ -40,13 +40,22 @@ func (t *Tasks) Add(name string) (err error) {
 
 	err = tx.Get(&position, "SELECT IFNULL(MAX(position), 0)+1 FROM task")
 	if err != nil {
-		return err
+		return
 	}
 
-	_, err = t.engine.Exec(
+	res, err := t.engine.Exec(
 		"INSERT INTO task (name, position) VALUES(?,?)",
-		name, position,
+		task.Name, position,
 	)
+	if err != nil {
+		return
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return
+	}
+	task.ID = id
+
 	err = tx.Commit()
 	return
 }
@@ -112,16 +121,66 @@ func (t *Tasks) QueryAll() (ret []models.Task, err error) {
 }
 
 // UpdateTask ...
-func (t *Tasks) UpdateTask(name string, task models.Task) error {
-	SQL := fmt.Sprintf(`UPDATE task SET name=?, status=?, year=?, month=?, week=?, day=? WHERE name=?`)
+func (t *Tasks) UpdateTask(task models.Task) error {
+	SQL := fmt.Sprintf(`UPDATE task SET name=?, status=?, year=?, month=?, week=?, day=? WHERE id=?`)
 	log.Print(SQL, task)
-	_, err := t.engine.Exec(SQL, task.Name, task.Status, task.Plan.Year, task.Plan.Month, task.Plan.Week, task.Plan.Day, name)
+	_, err := t.engine.Exec(SQL, task.Name, task.Status, task.Plan.Year, task.Plan.Month, task.Plan.Week, task.Plan.Day, task.ID)
+	return err
+}
+
+// ChangePosition by given id, tPos (target postion)
+func (t *Tasks) ChangePosition(id int64, tPos int) error {
+	tx, err := t.engine.Beginx()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err == nil {
+			return
+		}
+		if errRb := tx.Rollback(); errRb != nil {
+			log.Warnf("transaction rollback error: %v", errRb)
+		}
+	}()
+	var cPos int // current position
+	err = t.engine.Get(&cPos, "SELECT position FROM task WHERE id=?", id)
+	if err != nil {
+		return err
+	}
+	_, err = t.engine.Exec("UPDATE task SET position=position - 1 WHERE position > ? and position <= ?", cPos, tPos)
+	if err != nil {
+		return err
+	}
+	_, err = t.engine.Exec("UPDATE task SET position=? WHERE id=?", tPos, id)
 	return err
 }
 
 // DeleteTask ...
-func (t *Tasks) DeleteTask(name string) error {
-	SQL := fmt.Sprintf(`DELETE FROM task WHERE name=?`)
-	_, err := t.engine.Exec(SQL, name)
+func (t *Tasks) DeleteTask(id int64) error {
+	tx, err := t.engine.Beginx()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err == nil {
+			return
+		}
+		if errRb := tx.Rollback(); errRb != nil {
+			log.Warnf("transaction rollback error: %v", errRb)
+		}
+	}()
+
+	var cPos int // current position
+	err = t.engine.Get(&cPos, "SELECT position FROM task WHERE id=?", id)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.engine.Exec(`DELETE FROM task WHERE id=?`, id)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.engine.Exec(`UPDATE task SET position = position - 1 WHERE position > ?`, cPos)
 	return err
 }

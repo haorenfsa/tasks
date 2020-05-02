@@ -21,12 +21,11 @@ COMMIT;
 把 2 放到 4 的位置：
 
 ``` SQL
--- 已知 2 的 position 为 2, 需要把 position 变为 4
-START TRANSACTION;
-SELECT position FROM task WHRERE id=2; 
--- 在 code 中检查 2.position 没变化
-UPDATE task SET position = position - 1 WHERE position > 2 AND position <= 5;
-UPDATE task SET position = max(position) + 1 WHERE id=3;
+-- 已知 id 2 的 position 为 2, 需要把 position 变为 4
+BEGIN;
+UPDATE task SET position = position - 1 WHERE position > 2 AND position <= 4;
+UPDATE task SET position = 4 WHERE id=2;
+COMMIT;
 ```
 
 
