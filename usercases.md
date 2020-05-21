@@ -18,12 +18,14 @@
     - update name
     - update day plan
     - update week plan
+    - change order in table
+        - how: position column
 
 - DeleteTask
 
 #### TODO
 - UpdateTask
-    - change order in table
-        - how: position column
-    - add/update description
+    - add/update task description
+    - update task group (devide life and work)
+
 

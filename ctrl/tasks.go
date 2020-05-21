@@ -8,12 +8,14 @@ import (
 
 	"github.com/haorenfsa/tasks/core"
 	"github.com/haorenfsa/tasks/models"
+	"github.com/haorenfsa/tasks/storage/mysql"
 )
 
 // TaskController is controller for Task
 // implements server.Controller
 type TaskController struct {
-	core core.Tasks
+	core  core.Tasks
+	descs *mysql.TaskDescriptions
 }
 
 // NewTaskController builds a New TaskController
@@ -29,6 +31,8 @@ func (a *TaskController) Register(root gin.IRouter) {
 	g.PATCH("", a.handleUpdateTask)
 	g.DELETE("/:id", a.handleDeleteTask)
 	g.PUT("/:id/position/:position", a.handleChangePosition)
+	g.PUT("/:id/desc", a.handleChangeDesc)
+	g.GET("/:id/desc", a.handleGetDesc)
 }
 
 func (a *TaskController) handleAddTask(c *gin.Context) {
@@ -74,11 +78,35 @@ func (a *TaskController) handleChangePosition(c *gin.Context) {
 	id, err := parseIntParam(c, "id")
 	if err != nil {
 		writeMsgResponseByError(c, err)
+		return
 	}
 	position, err := parseIntParam(c, "position")
 	if err != nil {
 		writeMsgResponseByError(c, err)
+		return
 	}
 	err = a.core.ChangePosition(id, int(position))
 	writeMsgResponseByError(c, err)
+}
+
+func (a *TaskController) handleChangeDesc(c *gin.Context) {
+	id, err := parseIntParam(c, "id")
+	if err != nil {
+		writeMsgResponseByError(c, err)
+	}
+	desc := new(models.TaskDescription)
+	err = c.ShouldBindJSON(desc)
+	if err != nil {
+		writeMsgResponseByError(c, err)
+	}
+	err = a.descs.SetByTaskID(id, desc)
+	writeMsgResponseByError(c, err)
+}
+func (a *TaskController) handleGetDesc(c *gin.Context) {
+	id, err := parseIntParam(c, "id")
+	if err != nil {
+		writeMsgResponseByError(c, err)
+	}
+	ret, err := a.descs.GetByTaskID(id)
+	writeObjectResponseByError(c, ret, err)
 }
