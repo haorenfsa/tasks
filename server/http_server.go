@@ -1,6 +1,9 @@
 package server
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/contrib/static"
+	"github.com/gin-gonic/gin"
+)
 
 // HTTPServer can run to serve http requests
 type HTTPServer struct {
@@ -12,6 +15,7 @@ type HTTPServer struct {
 func NewHTTPServer(middlewares ...gin.HandlerFunc) *HTTPServer {
 	engine := gin.Default()
 	engine.Use(middlewares...)
+
 	return &HTTPServer{
 		engine:     engine,
 		rootRouter: engine.Group("/api/v1"),
@@ -23,6 +27,14 @@ func (h *HTTPServer) UseControllers(ctrls []Controller) {
 	for _, ctrl := range ctrls {
 		ctrl.Register(h.rootRouter)
 	}
+}
+
+// ServeStaticPath serves given static path
+func (h *HTTPServer) ServeStaticPath(path string) {
+	if path == "" {
+		return
+	}
+	h.engine.Use(static.Serve("/", static.LocalFile(path, true)))
 }
 
 // Controller can register request handler

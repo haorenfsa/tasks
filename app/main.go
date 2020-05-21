@@ -1,6 +1,10 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"log"
+
 	"github.com/haorenfsa/tasks/core"
 	"github.com/haorenfsa/tasks/ctrl"
 
@@ -10,6 +14,13 @@ import (
 )
 
 func main() {
+	var staticPath string
+	var port int
+	flag.StringVar(&staticPath, "s", "", "static file path to serve, not serve when empty")
+	flag.IntVar(&port, "p", 3001, "server port")
+	flag.Parse()
+	log.Print(staticPath)
+
 	theServer := server.NewHTTPServer()
 
 	dsn := engine.DSN{
@@ -26,5 +37,6 @@ func main() {
 
 	ctls := []server.Controller{taskController}
 	theServer.UseControllers(ctls)
-	theServer.Run(":8080")
+	theServer.ServeStaticPath(staticPath)
+	theServer.Run(fmt.Sprintf(":%d", port))
 }
