@@ -123,7 +123,6 @@ func (t *Tasks) QueryAll() (ret []models.Task, err error) {
 // UpdateTask ...
 func (t *Tasks) UpdateTask(task models.Task) error {
 	SQL := fmt.Sprintf(`UPDATE task SET name=?, status=?, year=?, month=?, week=?, day=? WHERE id=?`)
-	log.Print(SQL, task)
 	_, err := t.engine.Exec(SQL, task.Name, task.Status, task.Plan.Year, task.Plan.Month, task.Plan.Week, task.Plan.Day, task.ID)
 	return err
 }
