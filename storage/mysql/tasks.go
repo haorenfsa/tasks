@@ -62,16 +62,17 @@ func (t *Tasks) Add(task *models.Task) (err error) {
 
 // Task DB model
 type Task struct {
-	ID        int64             `db:"id"`
-	Name      string            `db:"name"`
-	Status    models.TaskStatus `db:"status"`
-	Position  int64             `db:"position"`
-	Year      int               `db:"year"`
-	Month     int               `db:"month"`
-	Week      int               `db:"week"`
-	Day       int               `db:"day"`
-	CreatedAt time.Time         `db:"created_at"`
-	UpdatedAt time.Time         `db:"updated_at"`
+	ID           int64             `db:"id"`
+	ParentTaskID int64             `db:"parent_task_id"`
+	Name         string            `db:"name"`
+	Status       models.TaskStatus `db:"status"`
+	Position     int64             `db:"position"`
+	Year         int               `db:"year"`
+	Month        int               `db:"month"`
+	Week         int               `db:"week"`
+	Day          int               `db:"day"`
+	CreatedAt    time.Time         `db:"created_at"`
+	UpdatedAt    time.Time         `db:"updated_at"`
 }
 
 func (t Task) fromModel(task *models.Task) {

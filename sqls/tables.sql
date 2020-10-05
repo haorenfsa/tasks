@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS task (
     id BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    parent_task_id BIGINT(20) NOT NULL DEFAULT -1 'parent task id, -1 means no parent',
     name VARCHAR(128) NOT NULL COMMENT 'name, unique',
     year SMALLINT(5) NOT NULL DEFAULT -1 COMMENT 'planed year, -1 means not set',
     month TINYINT(2) NOT NULL DEFAULT -1 COMMENT 'planed month, -1 means not set',

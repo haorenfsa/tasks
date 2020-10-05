@@ -1,15 +1,15 @@
 package core
 
 import (
-	"github.com/haorenfsa/tasks/storage/mysql"
+	"github.com/haorenfsa/tasks/storage"
 )
 
 // Tasks implements tasks methods interfaces
 type Tasks struct {
-	*mysql.Tasks
+	storage.TaskStorage
 }
 
 // NewTasks builds a New Tasks
-func NewTasks(storage *mysql.Tasks) *Tasks {
-	return &Tasks{Tasks: storage}
+func NewTasks(storage storage.TaskStorage) *Tasks {
+	return &Tasks{TaskStorage: storage}
 }
