@@ -12,6 +12,63 @@
 - 每个任务可以记录实际使用时间
 - 每日、每周、每月、每年有一个任务视图
 
+
+# 数据模型
+``` typescript
+// use online tool to change code into golang: https://app.quicktype.io/ , then change float64 to int64
+
+// task
+export interface Task {
+  id: number
+  name: string
+  status: TaskStatus
+  position: number
+  startAfter: LeveledTime
+  endBefore: LeveledTime
+  createdAt: number
+  updatedAt: number
+  // description: string
+  // planId: number
+  // subTasks: TaskEntry[]
+  // parentTask: TaskEntry
+}
+
+export interface TaskEntry {
+  id: number
+  name: string
+}
+
+export enum TaskStatus {
+  TODO,
+  Doing,
+  Done,
+  Pending,
+  Closed
+}
+
+// time
+export interface LeveledTime {
+  level: TimeLevel
+  time: number
+}
+
+export enum TimeLevel {
+  None,
+  Year,
+  Month,
+  Week,
+  Day,
+}
+// plan
+// export interface Plan {
+//   id: number
+//   name: string
+//   level: TimeLevel
+//   parentPlanId: number
+//   subPlanIds: number[]
+// }
+```
+
 # detail
 ## task
 #### done
@@ -34,5 +91,4 @@
 - UpdateTask
     - add/update task description
     - update task group (devide life and work)
-
 
